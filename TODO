@@ -1,0 +1,60 @@
+kolik procesu bude najednou v kriticke sekce? jen 1?
+inicializace semaforu:
+    sem_init();
+    sem_destroy();
+    nebo sem_open(login!!!), sem_close() a sem_unlink()
+
+sdilena pamet:
+    mmap / shmget
+    musi se uvolnit
+
+semafory i pamet se jednou udelaji v main a existuji pro vsechny procesy
+    fork - proces si nakopiruje vsechny promenne a bezi dal
+    promenne atd v kazdem procesu jsou unikatni, jedina komunikace mezi procesy je sdilena pamet a semafory
+
+fork - rozdeli proces na dva
+    kod pod nim se provede 2x - rodic je ten kdo volal fork
+
+while(wait(NULL) > 0)  - uspi dite, nejedn ase o aktivni cekani
+nebo waitpid() - musi se pamatovat pid kazdeho procesu, to je neprakticke
+^ dava se na konec mainu (cekani na umreni deti)
+    ZA nim je cleanup
+
+dvakrat for pro vytvoreni vsech zakazniku a uredniku
+
+sem_wait, sem_post
+
+bufferovani vystupu: setbuf(file, NULL), nebo po kazdem fprintf dat fflush(file);
+
+pouzit vfprintf - programovat vlastni print
+    possibly hardcodovat i file stream
+
+usleep po vytvoreni??
+
+barier_wait, bariera, barierni mutex
+
+i printy se musi flushovat! (mysleno logy)
+
+semgetvalue - vypisuje hodnotu, ale mozna jen do 0 (i pro 5 cekajicich vypise 0)
+
+v rade cekajicich procesu nezalezi na poradi - lze pouzit semafor s 0
+
+poradi v jakem se procesy rozjedou resi scheduler, je ndefinovane
+
+kamkoli do programu hodit random sleep()
+
+generator procesu:
+    v mainu se zavola dva forky, jeden proces pro generator jedh=noho typu procesu, druhy pro generaci druheho typu procesu
+    POKUD TO NEBUDE V ZADANI, NEDELAT TO
+    jinak by dite vznikle z forku nemelo forkovat nic dalsiho
+
+fronta = semafor ??
+
+
+========================================================
+KNOWN BUGS LIST, notes
+* called by office worker NEMUSI predchazet serving service of type X -> na poradi techto dvou akci nezalezi
+    * mozno zrusit synchronizaci a pouzit semafor pro vyreseni nize zmineneho bugu
+* zaklaznik muze odejit drive nez je jeho sluzba dokoncena - synchronizace s urednikem neni zapotrebi
+* muze byt zakaznik zavolan drive nez urednik vypise start?? - podle prikladu ne, dodelat
+* clean code - maximalne 3 odsazeni, pridat funkce: select_service() pro zakaznika...
