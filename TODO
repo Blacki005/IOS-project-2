@@ -58,3 +58,4 @@ KNOWN BUGS LIST, notes
 * zaklaznik muze odejit drive nez je jeho sluzba dokoncena - synchronizace s urednikem neni zapotrebi
 * muze byt zakaznik zavolan drive nez urednik vypise start?? - podle prikladu ne, dodelat
 * clean code - maximalne 3 odsazeni, pridat funkce: select_service() pro zakaznika...
+* offecer_start -> officer_rdy, can_close -> rdy_to_close

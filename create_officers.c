@@ -15,7 +15,7 @@ int create_officers(const unsigned officers_cnt, const unsigned max_break_time, 
                     return ret;
                 }
 
-                if (getpid() != main_pid) {
+                if (IS_CHILD) {
                     //vytvoreni jedinecne identity procesu
                     struct process_t identity;
                     identity.id = i + 1;
@@ -24,6 +24,7 @@ int create_officers(const unsigned officers_cnt, const unsigned max_break_time, 
                     sem_wait(A_write);
                     fprintf_flush(output_file, "%u: U %u: started\n", ++(*A),identity.id);
                     sem_post(A_write);
+
 
                     //TODO: obsluhuje zakazniky, dokud neni posta zavrena a zaroven jsou vsechny fronty prazdne
 
@@ -45,6 +46,8 @@ int create_officers(const unsigned officers_cnt, const unsigned max_break_time, 
                             sem_post(taking_break);
                         }
 
+                        //zakaznik muze jit k prepazce
+                        sem_post(officer_start);
 
                         //only one office worker can work - TODO: make it faster
                         sem_wait(choosing_service);

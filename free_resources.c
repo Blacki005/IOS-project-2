@@ -103,4 +103,16 @@ void free_resources() {
         }
     }
 
+    ret = sem_getvalue(officer_start, &val);
+    if (ret == 0) {
+        ret = sem_close(officer_start);
+        if (!ret) {
+            //perror_flush("Semaphore officer_start failed to close");
+        }
+        ret = sem_unlink("xjanst03 - officer_start");
+        if (!ret) {
+            //perror_flush("Semaphore officer_start failed to unlink");
+        }
+    }
+
 }

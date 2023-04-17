@@ -11,10 +11,16 @@ clean:
 run: $(PROGS)
 	./proj2 1 1 1 1 10
 
-proj2: main.o printf_flush.o fprintf_flush.o perror_flush.o free_resources.o create_officers.o create_customers.o serve_line.o take_break.o
+proj2: main.o printf_flush.o fprintf_flush.o perror_flush.o free_resources.o create_officers.o create_customers.o serve_line.o take_break.o enter_for_service.o check_arguments.o close_office.o
 	gcc $(CFLAGS) -o $@ $^ $(LD_FLAGS)
 
 main.o: main.c
+
+close_office.o: close_office.c
+
+check_arguments.o: check_arguments.c
+
+enter_for_service.o: enter_for_service.c
 
 take_break.o: take_break.c
 
