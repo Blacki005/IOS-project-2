@@ -12,16 +12,15 @@ unsigned *A;
 sem_t *service1;
 sem_t *service2;
 sem_t *service3;
-sem_t *can_close;
+sem_t *close_rdy;
+sem_t *officer_rdy;
 sem_t *choosing_service;
-sem_t *serving;
 sem_t *taking_break;
 sem_t *A_write;
-sem_t *officer_start;
 
 int main(int argc, const char *argv[]) {
 
-    unsigned *parameters = check_arguments(argc, argv);
+    long *parameters = check_arguments(argc, argv);
     if (parameters == NULL) {
         goto invalid_arguments;
     }
@@ -50,39 +49,11 @@ int main(int argc, const char *argv[]) {
         goto map_failed;
     }
 
-    //open post office - set can_close to open
+    //open post office - set close_rdy to open
     *is_open = 1;
-    can_close = sem_open("xjanst03 - can_close", O_CREAT, S_IRUSR | S_IWUSR, 1);
-    //TODO: uvolnit can_close v pripade selhani
 
-    //jen jeden urednik muze v jednom momentu vybirat kterou sluzbu bude obsluhovat:
-    choosing_service = sem_open("xjanst03 - choosing_service", O_CREAT, S_IRUSR | S_IWUSR, 1);
-    //TODO: korektni ukonceni
-
-    serving = sem_open("xjanst03 - serving", O_CREAT, S_IRUSR | S_IWUSR, 0); //initialized to stop
-
-    //cannot close if officer is just deciding to take break - initialized to open
-    taking_break = sem_open("xjanst03 - taking_break", O_CREAT, S_IRUSR | S_IWUSR, 1);
-
-    A_write = sem_open("xjanst03 - A_write", O_CREAT, S_IRUSR | S_IWUSR, 1);
-
-    //semafor resici bug, kdy mohl byt zakaznik volan k prepazce pred startem ureednika
-    //semafor je incializovany jako zavreny, otevira ho az startujici urednik a zakaznik jej po zavolani zavira
-    officer_start = sem_open("xjanst03 - officer_start", O_CREAT, S_IRUSR | S_IWUSR, 0);
-
-    //inicializace semaforu pro fronty zakazniku - locked
-    service1 = sem_open("xjanst03 - sem1", O_CREAT, S_IRUSR | S_IWUSR, 1);
-    service2 = sem_open("xjanst03 - sem2", O_CREAT, S_IRUSR | S_IWUSR, 1);
-    service3 = sem_open("xjanst03 - sem3", O_CREAT, S_IRUSR | S_IWUSR, 1);
-
-    //check if semaphores were created successfully
-    if (service1 == SEM_FAILED) {
-        goto sem_failed;
-    }
-    if (service2 == SEM_FAILED) {
-        goto sem_failed;
-    }
-    if (service3 == SEM_FAILED) {
+    
+    if (!init_semaphores()) {
         goto sem_failed;
     }
 

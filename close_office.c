@@ -12,7 +12,7 @@ void close_office(unsigned max_shift_time, FILE *output_file) {
         usleep((max_shift_time / 2) + (rand() % (max_shift_time / 2)));
 
         //pri zavirani posty nesmi dvermi prochazet zakaznik - ceka se na semafor
-        sem_wait(can_close);
+        sem_wait(close_rdy);
         sem_wait(taking_break);
 
         sem_wait(A_write);
@@ -21,7 +21,7 @@ void close_office(unsigned max_shift_time, FILE *output_file) {
     } else {
         usleep(max_shift_time);
 
-        sem_wait(can_close);
+        sem_wait(close_rdy);
         sem_wait(taking_break);
 
         sem_wait(A_write);
@@ -31,7 +31,7 @@ void close_office(unsigned max_shift_time, FILE *output_file) {
 
     *is_open = 0;
     sem_post(taking_break);
-    sem_post(can_close);
+    sem_post(close_rdy);
 
     return;
 }

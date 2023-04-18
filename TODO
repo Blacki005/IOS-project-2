@@ -59,3 +59,21 @@ KNOWN BUGS LIST, notes
 * muze byt zakaznik zavolan drive nez urednik vypise start?? - podle prikladu ne, dodelat
 * clean code - maximalne 3 odsazeni, pridat funkce: select_service() pro zakaznika...
 * offecer_start -> officer_rdy, can_close -> rdy_to_close
+* officer can take break even when some customer has not been called
+
+break sequence:
+u1 si bere pauzu
+z2 prijde pro 1                         sem  = 1
+z1 prijde pro 1                         sem1 = 0
+u2 startuje
+u2 zavola z1 k prepazce a obslouzi ho   sem1 = 1
+
+z2 projde volnym semaforem sem1 a ceka na semaforu officer_start 
+
+
+u2 si bere pauzu
+
+kdyz je officer na pauze. nemuze zavolat zAKAZNIKA - pote co dokonci pauzu odblokuje pristup k volani
+na zacatku spani zablokuje officer rdy a na konic ho zase odblokuje
+todo: na zacatku zavrit vsechny fronty, prvni prichozi urednik je odblokuje a vpusti prvni proces dovnitr
+todo: nemuze si vzit pauzu kdyz ma cekajici zakazniky

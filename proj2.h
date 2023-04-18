@@ -31,14 +31,13 @@ extern unsigned *A;
 extern sem_t *service1;
 extern sem_t *service2;
 extern sem_t *service3;
-extern sem_t *can_close;
+extern sem_t *close_rdy;
 extern sem_t *choosing_service;
-extern sem_t *serving; //->trywait - decrement without waiting (after successfull service completion)
-//serving shall be set to PASS when officer is done serving, STOP otherwise
-//def - stop, officer complete - pass, first program that passes - stop
 extern sem_t *taking_break;
 extern sem_t *A_write;
-extern sem_t *officer_start;
+extern sem_t *officer_rdy;
+
+int init_semaphores();
 
 void free_resources();
 
@@ -52,7 +51,7 @@ void take_break(FILE *output_file, const unsigned max_break_time, struct process
 
 void enter_for_service(struct process_t identity, FILE *output_file);
 
-unsigned *check_arguments(int argc, const char *argv[]);
+long *check_arguments(int argc, const char *argv[]);
 
 void close_office(unsigned max_shift_time, FILE *output_file);
 

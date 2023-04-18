@@ -27,25 +27,23 @@ void enter_for_service (struct process_t identity, FILE *output_file) {
         default:
             perror_flush("Bad service number!");
     }
-    sem_post(can_close);
+    sem_post(close_rdy);
 
-    //muze byt zavolan az v momente, kdy je urednik na poste
-    sem_wait(officer_start);
+    //muze byt zavolan az v momente, kdy je urednik pritomen na poste
+    //jde dovnitr a dekrementuje semafor
+    sem_wait(officer_rdy);
 
     //ceka na vyrizeni sluzby (pokud zde dorazi moc brzo, zamkne z defaultu zamceny semafor podruhe)
     sem_wait(A_write);
     fprintf_flush(output_file, "%u: Z %u: called by office worker\n", ++(*A),identity.id);
     sem_post(A_write);
 
-    sem_wait(serving);
+    //sem_wait(serving);
 
     //odchazi domu po dokonceni sluzby
     sem_wait(A_write);
     fprintf_flush(output_file, "%u: Z %u: going home\n", ++(*A),identity.id);
     sem_post(A_write);
-
-    //zamyka semafor cekani na vyrizeni sluzby pro nasledujicicho:
-    sem_trywait(serving);
 
     return;
 }

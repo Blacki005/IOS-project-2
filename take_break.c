@@ -8,6 +8,7 @@ void take_break(FILE *output_file, const unsigned max_break_time, struct process
     sem_post(A_write);
 
     sem_post(taking_break);
+
     gettimeofday(&t, NULL);
     srand(t.tv_usec * t.tv_sec);
     usleep(rand() % max_break_time);

@@ -30,8 +30,8 @@ int create_customers(const unsigned customers_cnt, const unsigned max_wait_time,
                 //cekani nahodny cas v intervalu <0, TZ> po spusteni
                 usleep(rand() % max_wait_time);
 
-                //pokud je posta otevrena, vyrizuje sluzbu, jinak odchazi domu - kdyz prochazi dvermi posty, posta nemuze zavrit - can_close semafor
-                sem_wait(can_close);
+                //pokud je posta otevrena, vyrizuje sluzbu, jinak odchazi domu - kdyz prochazi dvermi posty, posta nemuze zavrit - close_rdy semafor
+                sem_wait(close_rdy);
 
                 if (*is_open) {
                     enter_for_service(identity, output_file);
@@ -41,7 +41,7 @@ int create_customers(const unsigned customers_cnt, const unsigned max_wait_time,
                     sem_wait(A_write);
                     fprintf_flush(output_file, "%u: Z %u: going home\n", ++(*A),identity.id);
                     sem_post(A_write);
-                    sem_post(can_close);
+                    sem_post(close_rdy);
                     exit(0);
                 }
             }
